@@ -1,0 +1,1005 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>저스트뮤직 월간 레슨 레포트</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <style>
+    :root {
+      --main-color: #2b4b82;
+      --sub-color: #f4f6fb;
+      --border-color: #d0d4e0;
+      --text-color: #222;
+    }
+
+    * {
+      box-sizing: border-box;
+      font-family: "Pretendard", -apple-system, BlinkMacSystemFont, "Segoe UI",
+        system-ui, sans-serif;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+
+    body {
+      margin: 0;
+      padding: 16px;
+      background: #eeeeee;
+      color: var(--text-color);
+    }
+
+    /* 공통 입력 박스 스타일 */
+    input[type="text"],
+    input[type="date"],
+    input[type="month"],
+    textarea,
+    select {
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      padding: 4px 6px;
+      font-size: 13px;
+      background: #ffffff;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 70px;
+      resize: vertical;
+    }
+
+    .toolbar {
+      max-width: 900px;
+      margin: 0 auto 12px auto;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 13px;
+    }
+
+    .toolbar-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .toolbar label {
+      font-weight: 600;
+    }
+
+    .toolbar select,
+    .toolbar button {
+      padding: 6px 10px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+      font-size: 13px;
+      background-color: #ffffff;
+      cursor: pointer;
+    }
+
+    .toolbar button {
+      border: none;
+      background: var(--main-color);
+      color: #ffffff;
+      font-weight: 600;
+    }
+
+    .toolbar button:hover {
+      opacity: 0.9;
+    }
+
+    .report-wrapper {
+      position: relative;
+      max-width: 900px;
+      margin: 0 auto;
+      background: #ffffff;
+      padding: 32px 32px 40px 32px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+      border-radius: 8px;
+      transition: border 0.2s ease;
+      overflow: hidden;
+      z-index: 0;
+    }
+
+    .report-wrapper::before {
+      content: "";
+      position: absolute;
+      top: 6%;
+      left: 6%;
+      right: 6%;
+      bottom: 6%;
+      background-image: url("just-music-logo.png");
+      background-position: center center;
+      background-repeat: no-repeat;
+      background-size: 50vmin;
+      opacity: 0.08;
+      pointer-events: none;
+      z-index: 999;
+    }
+
+    .report-wrapper > * {
+      position: relative;
+      z-index: 1;
+    }
+
+    .report-wrapper.bordered {
+      border: 2px solid var(--main-color);
+    }
+
+    header.report-header {
+      border-bottom: 2px solid var(--main-color);
+      padding-bottom: 16px;
+      margin-bottom: 20px;
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: flex-end;
+    }
+
+    .report-title-block h1 {
+      margin: 0 0 6px 0;
+      font-size: 22px;
+      color: var(--main-color);
+    }
+
+    .report-title-block p {
+      margin: 0;
+      font-size: 13px;
+      color: #555;
+    }
+
+    /* 상단 정보 정렬 및 테두리 제거 */
+    .report-meta {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      font-size: 13px;
+    }
+
+    .meta-item {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .meta-item label {
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .report-meta input {
+      width: 140px;
+      border: none !important;
+      background: transparent !important;
+      padding: 2px 0;
+      text-align: left;
+      outline: none;
+    }
+
+    section {
+      margin-bottom: 18px;
+    }
+
+    section h2 {
+      font-size: 15px;
+      margin: 0 0 8px 0;
+      padding: 6px 10px;
+      background: var(--sub-color);
+      border-left: 4px solid var(--main-color);
+    }
+
+    .small-desc {
+      font-size: 12px;
+      color: #777;
+      margin-bottom: 6px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      margin-bottom: 6px;
+    }
+
+    table th,
+    table td {
+      border: 1px solid var(--border-color);
+      padding: 6px 8px;
+      vertical-align: top;
+    }
+
+    table th {
+      background: #f8f9fc;
+      text-align: center;
+      white-space: nowrap;
+    }
+
+    .info-table th {
+      width: 100px;
+    }
+
+    .info-table td input,
+    .info-table td select {
+      width: 100%;
+    }
+
+    #attendanceTable td {
+      text-align: center;
+      vertical-align: middle;
+    }
+
+    #attendanceTable input[type="text"] {
+      width: 100%;
+      text-align: center;
+    }
+
+    #lessonTable th,
+    #lessonTable td {
+      text-align: center;
+      vertical-align: middle;
+    }
+
+    #lessonTable textarea {
+      text-align: center;
+    }
+
+    #lessonTable colgroup col:nth-child(1) { width: 10%; }
+    #lessonTable colgroup col:nth-child(2) { width: 13%; }
+    #lessonTable colgroup col:nth-child(3) { width: 57%; }
+    #lessonTable colgroup col:nth-child(4) { width: 20%; }
+
+    #lessonTable td:nth-child(1) input,
+    #lessonTable td:nth-child(2) input {
+      width: 100%;
+      text-align: center;
+    }
+
+    .evaluation-table th:nth-child(1) { width: 20%; }
+    .evaluation-table th:nth-child(2) { width: 15%; }
+    .evaluation-table th:nth-child(3) { width: 55%; }
+    .evaluation-table th:nth-child(4) { width: 10%; }
+
+    .evaluation-table td input.eval-score {
+      width: 85%;
+      text-align: center;
+    }
+
+    .evaluation-table td input.eval-comment {
+      width: 100%;
+      text-align: left;
+    }
+
+    .evaluation-guide {
+      font-size: 11px;
+      color: #666;
+      margin-bottom: 4px;
+    }
+
+    .eval-item-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .eval-item-select,
+    .eval-item-custom,
+    .major-custom {
+      width: 100%;
+      font-size: 12px;
+      padding: 3px 4px;
+    }
+
+    .eval-item-custom, .major-custom {
+      display: none;
+    }
+
+    .row-delete-btn {
+      font-size: 11px;
+      padding: 4px 12px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+      background: #f8f8f8;
+      cursor: pointer;
+      display: inline-block;
+    }
+
+    .row-delete-btn:hover {
+      background: #f1f1f1;
+    }
+
+    .flex-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .flex-col {
+      flex: 1;
+      min-width: 220px;
+    }
+
+    .signature-area {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 18px;
+      font-size: 13px;
+      gap: 48px;
+    }
+
+    .signature-block {
+      text-align: center;
+    }
+
+    .signature-block span {
+      display: inline-block;
+      min-width: 140px;
+      border-bottom: 1px solid #ccc;
+      padding: 2px 2px;
+    }
+
+    .signature-input {
+      border: none;
+      width: 100%;
+      text-align: center;
+      font-size: 13px;
+      background: transparent;
+      outline: none;
+    }
+
+    .footer-note {
+      margin-top: 18px;
+      font-size: 11px;
+      color: #777;
+      text-align: right;
+    }
+
+    #practiceTable th:nth-child(1) { width: 10%; }
+    #practiceTable th:nth-child(2) { width: 10%; }
+    #practiceTable th:nth-child(3) { width: 10%; }
+    #practiceTable th:nth-child(4) { width: 15%; }
+    #practiceTable th:nth-child(5) { width: 55%; }
+
+    #practiceTable td:nth-child(1),
+    #practiceTable td:nth-child(2),
+    #practiceTable td:nth-child(3),
+    #practiceTable td:nth-child(4) {
+      text-align: center;
+      vertical-align: middle;
+    }
+
+    #practiceTable td:nth-child(1) input,
+    #practiceTable td:nth-child(2) input,
+    #practiceTable td:nth-child(3) input,
+    #practiceTable td:nth-child(4) input {
+      width: 100%;
+      text-align: center;
+    }
+
+    #practiceTable td:nth-child(5) textarea {
+      text-align: left;
+    }
+
+    .evaluation-chart-wrapper {
+      margin-top: 10px;
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      padding: 8px 10px;
+      background: #fafbff;
+    }
+
+    .evaluation-chart-title {
+      font-size: 12px;
+      font-weight: 600;
+      margin-bottom: 6px;
+      color: #444;
+    }
+
+    .evaluation-chart {
+      margin-top: 4px;
+    }
+
+    .chart-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 6px;
+      font-size: 12px;
+    }
+
+    .chart-label {
+      width: 120px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .chart-bar-track {
+      flex: 1;
+      height: 12px;
+      border-radius: 6px;
+      background: #e0e4f5;
+      overflow: hidden;
+    }
+
+    .chart-bar-fill {
+      height: 100%;
+      width: 0;
+      background: var(--main-color);
+      transition: width 0.3s ease;
+    }
+
+    .chart-value {
+      width: 40px;
+      text-align: right;
+      font-size: 11px;
+      color: #555;
+    }
+
+    @media screen and (max-width: 600px) {
+      body { padding: 8px; }
+      .report-wrapper { padding: 16px 12px 24px 12px; }
+      .toolbar { flex-direction: column; align-items: stretch; }
+      .toolbar-group { width: 100%; justify-content: space-between; }
+      header.report-header { flex-direction: column; align-items: flex-start; }
+      .report-meta { width: 100%; align-items: flex-start; text-align: left; }
+      table { display: block; width: 100%; overflow-x: auto; }
+      table th, table td { white-space: nowrap; }
+    }
+
+    @media print {
+      body { background: #ffffff; padding: 0; }
+      .toolbar { display: none; }
+      .report-wrapper { box-shadow: none; border-radius: 0; max-width: 100%; margin: 0; }
+      input::placeholder, textarea::placeholder { color: transparent !important; }
+      textarea { resize: none !important; }
+      select {
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+      }
+      select::-ms-expand { display: none; }
+      input[type="date"]::-webkit-calendar-picker-indicator,
+      input[type="month"]::-webkit-calendar-picker-indicator {
+        display: none !important;
+        -webkit-appearance: none;
+      }
+      button, .row-delete-btn { display: none !important; }
+      body::before {
+        content: "";
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 50vmin;
+        height: 50vmin;
+        background-image: url("just-music-logo.png");
+        background-repeat: no-repeat;
+        background-position: center center;
+        background-size: contain;
+        opacity: 0.08;
+        pointer-events: none;
+        z-index: 9999;
+      }
+      .report-wrapper::before { display: none !important; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="toolbar">
+    <div class="toolbar-group">
+      <label for="themeSelect">테마 선택:</label>
+      <select id="themeSelect">
+        <option value="basic">기본(Default)</option>
+        <option value="bordered">진한 테두리(Bordered)</option>
+        <option value="modern">모던 블루(Modern)</option>
+        <option value="warm">웜 톤(Warm)</option>
+        <option value="mono">모노톤(Mono)</option>
+      </select>
+    </div>
+    <div class="toolbar-group">
+      <input type="file" id="importFile" style="display:none;" accept=".html" onchange="loadReport(event)">
+      <button type="button" onclick="document.getElementById('importFile').click()" style="background:#6c757d;">불러오기</button>
+      <button type="button" onclick="window.print()">PDF/인쇄하기</button>
+      <button type="button" onclick="saveReport()">저장하기</button>
+      <button type="button" onclick="resetReport()" style="background:#d9534f;">내용 초기화</button>
+    </div>
+  </div>
+
+  <div class="report-wrapper" id="reportWrapper">
+    <header class="report-header">
+      <div class="report-title-block">
+        <h1>저스트뮤직아카데미 월간 레슨 레포트</h1>
+        <p>수강생 한 달 학습 현황 및 성취도 레포트입니다.</p>
+      </div>
+      <div class="report-meta">
+        <div class="meta-item"><label>리포트 월:</label> <input type="month" id="reportMonth" /></div>
+        <div class="meta-item"><label>발행일:</label> <input type="date" id="reportDate" /></div>
+        <div class="meta-item"><label>학원명:</label> <input type="text" value="저스트뮤직아카데미 동탄점" id="academyName" readonly /></div>
+      </div>
+    </header>
+
+    <section>
+      <h2>1. 수강생 기본 정보</h2>
+      <table class="info-table">
+        <tr>
+          <th>수강생 성명</th>
+          <td><input type="text" id="studentName" placeholder="예: 홍길동" /></td>
+          <th>학교 / 학년</th>
+          <td><input type="text" placeholder="예: 동탄고 1학년" /></td>
+        </tr>
+        <tr>
+          <th>전공(파트)</th>
+          <td>
+            <div class="eval-item-wrapper">
+              <select class="major-select" onchange="handleMajorChange(this)">
+                <option value="">선택하세요</option>
+                <option>보컬</option>
+                <option>기타</option>
+                <option>베이스</option>
+                <option>드럼</option>
+                <option>피아노/키보드</option>
+                <option>작곡/미디</option>
+                <option value="기타">기타(직접 입력)</option>
+              </select>
+              <input class="major-custom" type="text" placeholder="전공 입력" />
+            </div>
+          </td>
+          <th>담당 강사</th>
+          <td><input type="text" placeholder="예: 김OO 강사님" /></td>
+        </tr>
+        <tr>
+          <th>수강 유형</th>
+          <td>
+            <select>
+              <option>입시 레슨</option>
+              <option>취미 레슨</option>
+              <option>심화/전문 과정</option>
+            </select>
+          </td>
+          <th>연락처</th>
+          <td><input type="text" placeholder="학부모님 연락처 (선택)" /></td>
+        </tr>
+      </table>
+    </section>
+
+    <section>
+      <h2>2. 레슨 출결 현황</h2>
+      <p class="small-desc">한 달간의 출결 현황을 간단히 정리해 드립니다.</p>
+      <table id="attendanceTable">
+        <tr>
+          <th>총 예정 레슨 횟수</th>
+          <th>실제 진행 횟수</th>
+          <th>결석 횟수</th>
+          <th>보강 여부</th>
+        </tr>
+        <tr>
+          <td><input type="text" placeholder="예: 4회" /></td>
+          <td><input type="text" placeholder="예: 4회" /></td>
+          <td><input type="text" placeholder="예: 0회" /></td>
+          <td><input type="text" placeholder="예: 해당 없음 / 1회" /></td>
+        </tr>
+      </table>
+    </section>
+
+    <section>
+      <h2>3. 한 달간 레슨 내용 (주차별)</h2>
+      <p class="small-desc">주차별로 다룬 곡, 기술, 이론 등의 주요 내용을 정리해 드립니다.</p>
+      <table id="lessonTable">
+        <colgroup>
+          <col><col><col><col>
+        </colgroup>
+        <thead>
+          <tr>
+            <th>주차</th>
+            <th>레슨 일자</th>
+            <th>주요 레슨 내용</th>
+            <th>비고</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>1주차</td>
+            <td><input type="text" placeholder="예: 11/01" /></td>
+            <td><textarea placeholder="예: 기본 발성 점검, 기존 레퍼토리 음정 안정화, 리듬 읽기 훈련 등"></textarea></td>
+            <td><textarea placeholder="예: 과제 곡 지정"></textarea></td>
+          </tr>
+          <tr>
+            <td>2주차</td>
+            <td><input type="text" placeholder="예: 11/08" /></td>
+            <td><textarea placeholder="예: 신곡 레퍼토리 도입, 호흡과 프레이징 연습 등"></textarea></td>
+            <td><textarea placeholder="예: 녹음 과제 안내"></textarea></td>
+          </tr>
+          <tr>
+            <td>3주차</td>
+            <td><input type="text" placeholder="예: 11/15" /></td>
+            <td><textarea placeholder="예: 표현력 향상, 다이내믹 컨트롤, 리듬 바리에이션 연습 등"></textarea></td>
+            <td><textarea placeholder="예: 모의 평가 진행"></textarea></td>
+          </tr>
+          <tr>
+            <td>4주차</td>
+            <td><input type="text" placeholder="예: 11/22" /></td>
+            <td><textarea placeholder="예: 한 달 내용 정리, 실전 형식 연습 및 영상 촬영 등"></textarea></td>
+            <td><textarea placeholder="예: 종합 피드백 제공"></textarea></td>
+          </tr>
+        </tbody>
+      </table>
+      <button type="button" onclick="addLessonRow()" style="margin-top:4px; font-size:12px; padding:4px 8px;">
+        + 주차 추가
+      </button>
+    </section>
+
+    <section>
+      <h2>4. 성취도 및 평가</h2>
+      <p class="evaluation-guide">
+        ※ 점수 입력 예시: 4 / 5, 3.5, 80 / 100 등 자유롭게 입력 가능하며, 자동으로 0~100%로 환산됩니다.
+      </p>
+      <table class="evaluation-table" id="evaluationTable">
+        <thead>
+          <tr>
+            <th>평가 항목</th>
+            <th>수준/점수</th>
+            <th>코멘트</th>
+            <th>삭제</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <div class="eval-item-wrapper">
+                <select class="eval-item-select">
+                  <option value="리듬감">리듬감</option>
+                  <option value="음정 및 톤">음정 및 톤</option>
+                  <option value="테크닉 / 기교">테크닉 / 기교</option>
+                  <option value="표현력 / 음악성">표현력 / 음악성</option>
+                  <option value="과제 수행도">과제 수행도</option>
+                  <option value="연습 태도">연습 태도</option>
+                  <option value="기타">기타(직접 입력)</option>
+                </select>
+                <input class="eval-item-custom" type="text" placeholder="평가 항목을 입력하세요" />
+              </div>
+            </td>
+            <td><input type="text" placeholder="예: 4 / 5" class="eval-score" /></td>
+            <td><input type="text" placeholder="예: 기본 박자 감각은 안정적이나 빠른 템포에서의 정확도 보완 필요" class="eval-comment" /></td>
+            <td style="text-align:center;">
+              <button type="button" class="row-delete-btn" onclick="deleteEvaluationRow(this)">삭제</button>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <div class="eval-item-wrapper">
+                <select class="eval-item-select">
+                  <option value="음정 및 톤">음정 및 톤</option>
+                  <option value="리듬감">리듬감</option>
+                  <option value="테크닉 / 기교">테크닉 / 기교</option>
+                  <option value="표현력 / 음악성">표현력 / 음악성</option>
+                  <option value="과제 수행도">과제 수행도</option>
+                  <option value="연습 태도">연습 태도</option>
+                  <option value="기타">기타(직접 입력)</option>
+                </select>
+                <input class="eval-item-custom" type="text" placeholder="평가 항목을 입력하세요" />
+              </div>
+            </td>
+            <td><input type="text" placeholder="예: 3.5 / 5" class="eval-score" /></td>
+            <td><input type="text" placeholder="예: 중음역은 안정적, 고음역에서의 긴장 완화 훈련 필요" class="eval-comment" /></td>
+            <td style="text-align:center;">
+              <button type="button" class="row-delete-btn" onclick="deleteEvaluationRow(this)">삭제</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <button type="button" onclick="addEvaluationRow()" style="margin-top:4px; font-size:12px; padding:4px 8px;">
+        + 평가 항목 추가
+      </button>
+
+      <div class="evaluation-chart-wrapper">
+        <div class="evaluation-chart-title">성취도 시각화 (평가 항목별 상대적인 수준)</div>
+        <button type="button" onclick="updateEvaluationChart()" style="margin-bottom:6px; font-size:11px; padding:3px 8px;">
+          그래프 업데이트
+        </button>
+        <div id="evaluationChart" class="evaluation-chart"></div>
+      </div>
+    </section>
+
+    <section>
+      <h2>5. 연습량 및 과제 수행</h2>
+      <p class="small-desc">한 달간 각 주(week)별 연습량과 과제 수행 상황을 기록해 주세요.</p>
+      <table id="practiceTable">
+        <thead>
+          <tr>
+            <th>주차</th>
+            <th>기간</th>
+            <th>연습일 수</th>
+            <th>하루 평균 연습시간</th>
+            <th>주요 연습 내용 / 과제 수행</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>1주차</td>
+            <td><input type="text" placeholder="예: 11/01 ~ 11/07" /></td>
+            <td><input type="text" placeholder="예: 4일" /></td>
+            <td><input type="text" placeholder="예: 1시간" /></td>
+            <td><textarea placeholder="예: 발성 기초, 레퍼토리 A 후렴 반복 연습, 리듬 패턴 1~2번 집중 등"></textarea></td>
+          </tr>
+          <tr>
+            <td>2주차</td>
+            <td><input type="text" placeholder="예: 11/08 ~ 11/14" /></td>
+            <td><input type="text" placeholder="예: 3일" /></td>
+            <td><input type="text" placeholder="예: 1~1.5시간" /></td>
+            <td><textarea placeholder="예: 신곡 레퍼토리 B 1절 완성, 녹음 과제 1회 수행 등"></textarea></td>
+          </tr>
+          <tr>
+            <td>3주차</td>
+            <td><input type="text" placeholder="예: 11/15 ~ 11/21" /></td>
+            <td><input type="text" placeholder="예: 4일" /></td>
+            <td><input type="text" placeholder="예: 1시간" /></td>
+            <td><textarea placeholder="예: 고음 구간 집중 연습, 리듬 변형 패턴 연습 등"></textarea></td>
+          </tr>
+          <tr>
+            <td>4주차</td>
+            <td><input type="text" placeholder="예: 11/22 ~ 11/30" /></td>
+            <td><input type="text" placeholder="예: 5일" /></td>
+            <td><input type="text" placeholder="예: 1~2시간" /></td>
+            <td><textarea placeholder="예: 전체 곡 완곡 연습, 모의 실전 녹음 및 자기 피드백 등"></textarea></td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>6. 다음 달 학습 계획 및 목표</h2>
+      <div class="flex-row">
+        <div class="flex-col">
+          <p class="small-desc">다음 달에 중점적으로 진행할 내용을 작성해 주세요.</p>
+          <textarea placeholder="예)
+1) 발성: 고음역 안정화 및 호흡 유지 훈련
+2) 리듬: 16비트 리듬 패턴 및 변형 패턴 숙달
+3) 레퍼토리: 입시/오디션용 곡 1~2곡 선정 및 완성도 향상
+4) 표현: 가사 해석과 감정 전달 중심의 레슨 진행"></textarea>
+        </div>
+        <div class="flex-col">
+          <p class="small-desc">수강생과 함께 공유할 구체적인 목표를 작성해 주세요.</p>
+          <textarea placeholder="예)
+- 다음 달 말까지 현재 연습곡 1곡을 완곡 기준 90% 이상 완성
+- 녹음 또는 영상 촬영을 통해 본인 연주/노래를 객관적으로 확인
+- 매주 최소 4일, 하루 1시간 이상 개인 연습 실천"></textarea>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>7. 학부모님께 드리는 말씀 (담당 강사 의견)</h2>
+      <p class="small-desc">
+        수강생의 한 달간 전반적인 변화와 강점/보완점, 가정에서 도와주시면 좋을 부분을 중심으로 작성해 주세요.
+      </p>
+      <textarea placeholder="예)
+한 달 동안 학생은 레슨에 매우 성실하게 참여하였으며, 특히 리듬감과 표현력 부분에서 눈에 띄는 성장이 있었습니다. 
+고음역에서의 안정감과 호흡 유지가 앞으로의 핵심 과제가 될 것으로 보이며, 집에서의 짧은 발성 연습(10~15분)을 꾸준히 병행해 주시면 좋겠습니다.
+
+학생이 음악을 즐기면서도 목표를 향해 차근차근 나아갈 수 있도록 학원에서도 체계적으로 지도하겠습니다. 
+궁금하신 사항이나 상담이 필요하신 경우 언제든지 편하게 문의 부탁드립니다."></textarea>
+    </section>
+
+    <section>
+      <h2>8. 확인</h2>
+      <div class="signature-area">
+        <div class="signature-block">
+          <div>담당 강사</div>
+          <span><input type="text" class="signature-input" placeholder="담당 강사 성명" /></span>
+        </div>
+      </div>
+    </section>
+
+    <div class="footer-note">
+      ※ 본 레포트는 수강생의 학습 과정과 성장을 학부모님과 함께 공유하기 위한 자료입니다.
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      initDefaultDates();
+
+      const themeSelect = document.getElementById("themeSelect");
+      const reportWrapper = document.getElementById("reportWrapper");
+
+      function applyTheme(theme) {
+        const root = document.documentElement;
+        reportWrapper.classList.remove("bordered");
+        switch (theme) {
+          case "bordered":
+            root.style.setProperty("--main-color", "#2b4b82");
+            root.style.setProperty("--sub-color", "#f4f6fb");
+            reportWrapper.classList.add("bordered");
+            break;
+          case "modern":
+            root.style.setProperty("--main-color", "#1f3c88");
+            root.style.setProperty("--sub-color", "#e9f0ff");
+            break;
+          case "warm":
+            root.style.setProperty("--main-color", "#b85c38");
+            root.style.setProperty("--sub-color", "#fff4ec");
+            break;
+          case "mono":
+            root.style.setProperty("--main-color", "#333333");
+            root.style.setProperty("--sub-color", "#f5f5f5");
+            break;
+          default:
+            root.style.setProperty("--main-color", "#2b4b82");
+            root.style.setProperty("--sub-color", "#f4f6fb");
+            break;
+        }
+      }
+
+      themeSelect.addEventListener("change", function () { applyTheme(this.value); });
+      applyTheme(themeSelect.value);
+
+      bindEvaluationEvents();
+      updateEvaluationChart();
+    });
+
+    function initDefaultDates() {
+      const today = new Date();
+      const year = today.getFullYear();
+      const month = String(today.getMonth() + 1).padStart(2, "0");
+      const date = String(today.getDate()).padStart(2, "0");
+
+      const reportMonthInput = document.getElementById("reportMonth");
+      const reportDateInput = document.getElementById("reportDate");
+
+      if (reportMonthInput && !reportMonthInput.value) {
+        reportMonthInput.value = `${year}-${month}`;
+      }
+      if (reportDateInput && !reportDateInput.value) {
+        reportDateInput.value = `${year}-${month}-${date}`;
+      }
+    }
+
+    function resetReport() {
+      if (confirm("모든 입력 내용을 초기화하시겠습니까?")) {
+        // 모든 input 초기화 (학원명 제외)
+        document.querySelectorAll('input:not(#academyName)').forEach(input => {
+          input.value = "";
+          if (input.classList.contains('major-custom') || input.classList.contains('eval-item-custom')) {
+            input.style.display = 'none';
+          }
+        });
+        // 모든 textarea 초기화
+        document.querySelectorAll('textarea').forEach(textarea => {
+          textarea.value = "";
+        });
+        // 모든 select 초기화 (테마 제외)
+        document.querySelectorAll('select:not(#themeSelect)').forEach(select => {
+          select.selectedIndex = 0;
+          select.style.display = 'block';
+        });
+        
+        initDefaultDates();
+        updateEvaluationChart();
+        alert("초기화되었습니다.");
+      }
+    }
+
+    function handleMajorChange(select) {
+      const wrapper = select.closest(".eval-item-wrapper");
+      const input = wrapper.querySelector(".major-custom");
+      if (select.value === "기타") {
+        select.style.display = "none";
+        input.style.display = "block";
+        input.focus();
+      } else {
+        input.style.display = "none";
+        input.value = "";
+        select.style.display = "block";
+      }
+    }
+
+    function addLessonRow() {
+      const table = document.getElementById("lessonTable").getElementsByTagName('tbody')[0];
+      const dataRowCount = table.rows.length;
+      const newRow = table.insertRow(-1);
+      const weekIndex = dataRowCount + 1;
+      newRow.innerHTML = `<td>${weekIndex}주차</td><td><input type="text" placeholder="예: 11/01" /></td><td><textarea placeholder="레슨 내용 입력"></textarea></td><td><textarea placeholder="비고 입력"></textarea></td>`;
+    }
+
+    function addEvaluationRow() {
+      const table = document.getElementById("evaluationTable").getElementsByTagName('tbody')[0];
+      const newRow = table.insertRow(-1);
+      newRow.innerHTML = `<td><div class="eval-item-wrapper"><select class="eval-item-select"><option value="리듬감">리듬감</option><option value="기타">기타</option></select><input class="eval-item-custom" type="text" placeholder="항목 입력" /></div></td><td><input type="text" class="eval-score" /></td><td><input type="text" class="eval-comment" /></td><td style="text-align:center;"><button type="button" class="row-delete-btn" onclick="deleteEvaluationRow(this)">삭제</button></td>`;
+      bindEvaluationEvents();
+    }
+
+    function deleteEvaluationRow(button) {
+      const table = document.getElementById("evaluationTable").getElementsByTagName('tbody')[0];
+      if (table.rows.length <= 1) return;
+      button.closest("tr").remove();
+      updateEvaluationChart();
+    }
+
+    function bindEvaluationEvents() {
+      document.querySelectorAll(".eval-item-select").forEach(sel => {
+        sel.onchange = function() {
+          const inp = this.nextElementSibling;
+          if(this.value === "기타") { this.style.display="none"; inp.style.display="block"; inp.focus(); }
+          updateEvaluationChart();
+        };
+      });
+      document.querySelectorAll(".eval-item-custom, .eval-score").forEach(inp => {
+        inp.oninput = updateEvaluationChart;
+      });
+    }
+
+    function parseScoreToPercent(raw) {
+      if (!raw) return null;
+      let s = raw.replace(/\s/g, "");
+      if (s.includes("/")) {
+        const p = s.split("/");
+        if (!isNaN(p[0]) && !isNaN(p[1]) && p[1] > 0) return (p[0] / p[1]) * 100;
+      }
+      const v = parseFloat(s);
+      return isNaN(v) ? null : (v <= 5 ? (v / 5) * 100 : v);
+    }
+
+    function updateEvaluationChart() {
+      const container = document.getElementById("evaluationChart");
+      container.innerHTML = "";
+      document.querySelectorAll("#evaluationTable tbody tr").forEach(row => {
+        const sel = row.querySelector(".eval-item-select"), custom = row.querySelector(".eval-item-custom");
+        const label = (custom.style.display !== "none" && custom.value) ? custom.value : sel.value;
+        const percent = parseScoreToPercent(row.querySelector(".eval-score").value);
+        if (label && percent !== null) {
+          container.innerHTML += `<div class="chart-row"><div class="chart-label">${label}</div><div class="chart-bar-track"><div class="chart-bar-fill" style="width:${Math.min(percent, 100)}%"></div></div><div class="chart-value">${Math.round(percent)}%</div></div>`;
+        }
+      });
+    }
+
+    function saveReport() {
+      const name = document.getElementById("studentName").value.trim() || "수강생";
+      const month = document.getElementById("reportMonth").value || "날짜";
+      const fileName = `[${name}_${month}].html`;
+      document.querySelectorAll("input, textarea, select").forEach(el => {
+        if(el.tagName === "SELECT") { Array.from(el.options).forEach(o => o.selected = (o.value === el.value)); }
+        else if(el.tagName === "TEXTAREA") el.textContent = el.value;
+        else el.setAttribute("value", el.value);
+      });
+      const blob = new Blob(["<!DOCTYPE html>\n" + document.documentElement.outerHTML], { type: "text/html;charset=utf-8" });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob); a.download = fileName; a.click();
+    }
+
+    function loadReport(e) {
+      const file = e.target.files[0];
+      if(!file) return;
+      const reader = new FileReader();
+      reader.onload = function(ev) {
+        const doc = new DOMParser().parseFromString(ev.target.result, "text/html");
+        document.getElementById("reportWrapper").innerHTML = doc.getElementById("reportWrapper").innerHTML;
+        const container = document.getElementById("reportWrapper");
+        const restoredInputs = container.querySelectorAll("input, textarea, select");
+        restoredInputs.forEach(el => {
+          if (el.tagName === "TEXTAREA") el.value = el.textContent;
+          else if (el.tagName === "SELECT") {
+            const opt = el.querySelector("option[selected]");
+            if(opt) el.value = opt.value;
+          } else el.value = el.getAttribute("value") || "";
+          
+          if (el.classList.contains('major-custom') && el.value) {
+            el.style.display = 'block';
+            el.previousElementSibling.style.display = 'none';
+          }
+          if (el.classList.contains('eval-item-custom') && el.value) {
+            el.style.display = 'block';
+            el.previousElementSibling.style.display = 'none';
+          }
+        });
+        bindEvaluationEvents(); updateEvaluationChart();
+        alert("레포트를 성공적으로 불러왔습니다.");
+      };
+      reader.readAsText(file);
+    }
+  </script>
+</body>
+</html>
