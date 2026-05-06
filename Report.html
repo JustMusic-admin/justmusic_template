@@ -971,14 +971,32 @@
       const name = document.getElementById("studentName").value.trim() || "수강생";
       const month = document.getElementById("reportMonth").value || "날짜";
       const fileName = `[${name}_${month}].html`;
+
+      // 모든 입력 요소의 현재 값을 HTML 속성에 강제 반영
       document.querySelectorAll("input, textarea, select").forEach(el => {
-        if(el.tagName === "SELECT") { Array.from(el.options).forEach(o => o.selected = (o.value === el.value)); }
-        else if(el.tagName === "TEXTAREA") el.textContent = el.value;
-        else el.setAttribute("value", el.value);
+        if (el.tagName === "SELECT") {
+          // 모든 옵션의 selected 속성 초기화 후 현재 값만 selected 부여
+          Array.from(el.options).forEach(o => {
+            if (o.value === el.value) {
+              o.setAttribute("selected", "selected");
+            } else {
+              o.removeAttribute("selected");
+            }
+          });
+          // select 태그 자체에도 현재 값을 저장해둠 (복구용)
+          el.setAttribute("data-saved-value", el.value);
+        } else if (el.tagName === "TEXTAREA") {
+          el.textContent = el.value;
+        } else {
+          el.setAttribute("value", el.value);
+        }
       });
+
       const blob = new Blob(["<!DOCTYPE html>\n" + document.documentElement.outerHTML], { type: "text/html;charset=utf-8" });
       const a = document.createElement("a");
-      a.href = URL.createObjectURL(blob); a.download = fileName; a.click();
+      a.href = URL.createObjectURL(blob);
+      a.download = fileName;
+      a.click();
     }
 
     function loadReport(event) {
@@ -988,27 +1006,37 @@
       reader.onload = function(e) {
         const doc = new DOMParser().parseFromString(e.target.result, "text/html");
         const newWrapper = doc.getElementById("reportWrapper");
+        
         if (newWrapper) {
           document.getElementById("reportWrapper").innerHTML = newWrapper.innerHTML;
-          // 입력 요소들의 값을 복구 (속성에 저장된 값을 value로 전환)
+          
+          // 입력 요소들의 값을 복구
           const restoredInputs = document.getElementById("reportWrapper").querySelectorAll("input, textarea, select");
           restoredInputs.forEach(el => {
-            if (el.tagName === "TEXTAREA") el.value = el.textContent;
-            else if (el.tagName === "SELECT") {
-              const opt = el.querySelector("option[selected]");
-              if (opt) el.value = opt.value;
-            } else el.value = el.getAttribute("value") || "";
-
-            // 커스텀 입력창 상태 복구
-            if (el.classList.contains('major-custom') && el.value) {
-              el.style.display = 'block';
-              el.previousElementSibling.style.display = 'none';
+            if (el.tagName === "TEXTAREA") {
+              el.value = el.textContent;
+            } else if (el.tagName === "SELECT") {
+              // 저장 시 기록했던 data-saved-value 혹은 selected 옵션 탐색
+              const savedValue = el.getAttribute("data-saved-value");
+              if (savedValue) {
+                el.value = savedValue;
+              } else {
+                const opt = el.querySelector("option[selected]");
+                if (opt) el.value = opt.value;
+              }
+            } else {
+              el.value = el.getAttribute("value") || "";
             }
-            if (el.classList.contains('eval-item-custom') && el.value) {
+
+            // [추가] 커스텀 입력창(직접 입력) 상태 복구 로직 강화
+            if ((el.classList.contains('major-custom') || el.classList.contains('eval-item-custom')) && el.value) {
               el.style.display = 'block';
-              el.previousElementSibling.style.display = 'none';
+              if (el.previousElementSibling && el.previousElementSibling.tagName === "SELECT") {
+                el.previousElementSibling.style.display = 'none';
+              }
             }
           });
+          
           bindEvaluationEvents();
           updateEvaluationChart();
           alert("레포트를 성공적으로 불러왔습니다.");
